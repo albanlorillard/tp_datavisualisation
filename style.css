@@ -1,0 +1,49 @@
+/* Dataviz1*/
+div.tooltip {
+    position: absolute;
+    text-align: center;
+    color: black;
+    width: 275px;
+    height: 37px;
+    padding: 2px;
+    font: 12px sans-serif;
+    background: grey;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+#info {
+    margin-top: 50px;
+}
+
+#deptinfo {
+    margin-top: 30px;
+}
+
+.department {
+    cursor: pointer;
+    stroke: black;
+    stroke-width: .5px;
+}
+
+.department:hover {
+    stroke-width: 2px;
+}
+
+#svg1 {
+    display: block;
+}
+
+/* dataviz2 */
+.bar {
+    fill: steelblue;
+}
+
+.bar:hover {
+    fill: brown;
+}
+
+.axis--x path {
+    display: none;
+}
