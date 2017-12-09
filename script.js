@@ -24,7 +24,8 @@ function identifying(str){
 }
 
 
-var total_ALIMENTATION = 0, total_FABRICATION = 0, total_BATIMENT = 0, total_SERVICES = 0;
+var total_ALIMENTATION = 0, total_FABRICATION = 0, total_BATIMENT = 0, total_SERVICES = 0, total_ENTREPRISE = 0 ;
+var dataBarChart;
 
 // Dataviz 1 - Carte de la France
 var width = 600, height = 550;
@@ -60,10 +61,12 @@ var svg2 = d3.select('#dataviz2').append("svg")
 var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
     y = d3.scaleLinear().rangeRound([height, 0]);
 
+var margin = {top: 20, right: 20, bottom: 30, left: 40};
+    width2 = 960 - margin.left - margin.right;
+    height2 = 500 - margin.top - margin.bottom;
+
 var g = svg2.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-
 
 d3.json('./departments.json', function(req, geojson) {
     var features = deps.selectAll("path")
@@ -162,34 +165,74 @@ d3.json('./departments.json', function(req, geojson) {
         });
 
         // Dataviz 2
-        x.domain(["Alimentation", "Fabrication", "Batiment", "Service"]);
-        y.domain([0, 100]);
-
-        g.append("g")
-            .attr("class", "axis axis--x")
-            .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x));
-
-        g.append("g")
-            .attr("class", "axis axis--y")
-            .call(d3.axisLeft(y).ticks(10, "%"))
-            .append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", 6)
-            .attr("dy", "0.71em")
-            .attr("text-anchor", "end")
-            .text("Pourcentage d'entreprise");
-
-        g.selectAll(".bar")
-            .data(data)
-            .enter().append("rect")
-            .attr("class", "bar")
-            .attr("x", function(d) { return x(d.letter); })
-            .attr("y", function(d) { return y(d.frequency); })
-            .attr("width", x.bandwidth())
-            .attr("height", function(d) { return height - y(d.frequency); });
+// define the axis
+        var xAxis = d3.svg.axis()
+            .scale(x2)
+            .orient("bottom")
 
 
+        var yAxis = d3.svg.axis()
+            .scale(y2)
+            .orient("left")
+            .ticks(10);
+
+        dataBarChart =
+            [{
+                "x" : "Alimentation",
+                "total": total_ALIMENTATION
+            },{
+                "x" : "Fabrication",
+                "total": total_FABRICATION
+            },{
+                "x" : "Batiment",
+                "total": total_BATIMENT
+            },{
+                "x" : "Service",
+                "total": total_SERVICES
+            }
+            ];
+
+            console.log(dataBarChart);
+            dataBarChart.forEach(function(d) {
+                d.x = d.x;
+                d.total = +d.total;
+            });
+
+            // scale the range of the data
+            x.domain(dataBarChart.map(function(d) { return d.x; }));
+            y.domain([0, d3.max(dataBarChart, function(d) { return d.total; })]);
+
+            // add axis
+            svg2.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis)
+                .selectAll("text")
+                .style("text-anchor", "end")
+                .attr("dx", "-.8em")
+                .attr("dy", "-.55em")
+                .attr("transform", "rotate(-90)" );
+
+            svg2.append("g")
+                .attr("class", "y axis")
+                .call(yAxis)
+                .append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 5)
+                .attr("dy", ".71em")
+                .style("text-anchor", "end")
+                .text("Fréquence");
+
+
+            // Add bar chart
+            svg.selectAll("bar")
+                .data(dataBarChart)
+                .enter().append("rect")
+                .attr("class", "bar")
+                .attr("x", function(d) { return x(d.x); })
+                .attr("width", x.rangeBand())
+                .attr("y", function(d) { return y(d.total); })
+                .attr("height", function(d) { return height2 - y(d.total); });
 
 
     });
