@@ -166,14 +166,10 @@ d3.json('./departments.json', function(req, geojson) {
 
         // Dataviz 2
 // define the axis
-        var xAxis = d3.svg.axis()
-            .scale(x2)
-            .orient("bottom")
+        var xAxis = d3.axisBottom(x);
 
 
-        var yAxis = d3.svg.axis()
-            .scale(y2)
-            .orient("left")
+        var yAxis = d3.axisLeft(y)
             .ticks(10);
 
         dataBarChart =
@@ -225,12 +221,12 @@ d3.json('./departments.json', function(req, geojson) {
 
 
             // Add bar chart
-            svg.selectAll("bar")
+            svg2.selectAll("bar")
                 .data(dataBarChart)
                 .enter().append("rect")
                 .attr("class", "bar")
                 .attr("x", function(d) { return x(d.x); })
-                .attr("width", x.rangeBand())
+                .attr("width", x.bandwidth)
                 .attr("y", function(d) { return y(d.total); })
                 .attr("height", function(d) { return height2 - y(d.total); });
 
