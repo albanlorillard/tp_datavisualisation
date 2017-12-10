@@ -81,7 +81,7 @@ var promise = new Promise(function(resolve, reject) {
                 total_BATIMENT += parseInt(row.BATIMENT);
                 total_FABRICATION += parseInt(row.FABRICATION);
                 total_SERVICES += parseInt(row.SERVICES);
-                total_ENTREPRISE += parseInt(row.Entreprise_Artisanale)+parseInt(row.Total)
+                total_ENTREPRISE += parseInt(row.Total)
             });
 
             // mise en %
