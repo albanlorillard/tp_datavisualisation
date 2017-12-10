@@ -49,128 +49,133 @@ var deps = svg.append("g");
 var div = d3.select("#dataviz1").append("div")
     .attr("class", "tooltip")
     .style("opacity", 0);
+var promise = new Promise(function(resolve, reject) {
+    d3.json('./departments.json', function(req, geojson) {
+        var features = deps.selectAll("path")
+            .data(geojson.features)
+            .enter()
+            .append("path")
+            .attr("d", path)
+            .attr("id", function(d) {return identifying(d.properties.NOM_DEPT)});
 
-// Définition de la Dataviz 2
-var width2 = 600, height2 = 550;
+        d3.csv("./donnees_artisans.csv", function(csv){
+            // Dataviz 1
+            var data = [];
 
-var svg2 = d3.select('#dataviz2').append("svg")
-    .attr("id", "svg2")
-    .attr("width", width2)
-    .attr("height", height2);
+            // Formatage et recalcule des datas
+            csv.forEach(function(row){
+                data.push({
+                    id: identifying(row.Departement),
+                    departement: row.Departement,
+                    alimentation: parseInt(row.ALIMENTATION)/parseInt(row.Total),
+                    batiment: parseInt(row.BATIMENT)/parseInt(row.Total),
+                    fabrication: parseInt(row.FABRICATION)/parseInt(row.Total),
+                    services: parseInt(row.SERVICES)/parseInt(row.Total),
+                    caParEntreprise: parseInt(row.CA)/(parseInt(row.Total)+parseInt(row.Entreprise_Artisanale)),
+                    vaParEntreprise: parseInt(row.VA)/(parseInt(row.Total)+parseInt(row.Entreprise_Artisanale)),
+                    ca: parseInt(row.CA),
+                    va: parseInt(row.VA)
+                });
 
-var x = d3.scaleBand().rangeRound([0, width]).padding(0.1),
-    y = d3.scaleLinear().rangeRound([height, 0]);
-
-var margin = {top: 20, right: 20, bottom: 30, left: 40};
-    width2 = 960 - margin.left - margin.right;
-    height2 = 500 - margin.top - margin.bottom;
-
-var g = svg2.append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-d3.json('./departments.json', function(req, geojson) {
-    var features = deps.selectAll("path")
-        .data(geojson.features)
-        .enter()
-        .append("path")
-        .attr("d", path)
-        .attr("id", function(d) {return identifying(d.properties.NOM_DEPT)});
-
-    d3.csv("./donnees_artisans.csv", function(csv){
-        // Dataviz 1
-        var data = [];
-
-        // Formatage et recalcule des datas
-        csv.forEach(function(row){
-            data.push({
-                id: identifying(row.Departement),
-                departement: row.Departement,
-                alimentation: parseInt(row.ALIMENTATION)/parseInt(row.Total),
-                batiment: parseInt(row.BATIMENT)/parseInt(row.Total),
-                fabrication: parseInt(row.FABRICATION)/parseInt(row.Total),
-                services: parseInt(row.SERVICES)/parseInt(row.Total),
-                caParEntreprise: parseInt(row.CA)/(parseInt(row.Total)+parseInt(row.Entreprise_Artisanale)),
-                vaParEntreprise: parseInt(row.VA)/(parseInt(row.Total)+parseInt(row.Entreprise_Artisanale)),
-                ca: parseInt(row.CA),
-                va: parseInt(row.VA)
+                total_ALIMENTATION += parseInt(row.ALIMENTATION);
+                total_BATIMENT += parseInt(row.BATIMENT);
+                total_FABRICATION += parseInt(row.FABRICATION);
+                total_SERVICES += parseInt(row.SERVICES);
+                total_ENTREPRISE += parseInt(row.Entreprise_Artisanale)+parseInt(row.Total)
             });
 
-            total_ALIMENTATION += parseInt(row.ALIMENTATION);
-            total_BATIMENT += parseInt(row.BATIMENT);
-            total_FABRICATION += parseInt(row.FABRICATION);
-            total_SERVICES += parseInt(row.SERVICES);
-            total_ENTREPRISE += parseInt(row.Entreprise_Artisanale)+parseInt(row.Total)
-        });
-
-        // mise en %
-        total_ALIMENTATION = total_ALIMENTATION / total_ENTREPRISE;
-        total_BATIMENT = total_BATIMENT / total_ENTREPRISE;
-        total_FABRICATION = total_FABRICATION / total_ENTREPRISE;
-        total_SERVICES = total_SERVICES / total_ENTREPRISE;
+            // mise en %
+            total_ALIMENTATION = total_ALIMENTATION / total_ENTREPRISE;
+            total_BATIMENT = total_BATIMENT / total_ENTREPRISE;
+            total_FABRICATION = total_FABRICATION / total_ENTREPRISE;
+            total_SERVICES = total_SERVICES / total_ENTREPRISE;
 
 
-        // Création du nuancier
-        var quantile = d3.scaleQuantile()
-            .domain([57, 400])      // D'après l'échelle réglé sur tableau
-            .range(d3.range(6));    // D'après le nombre d'échellons déterminé sur tableau
+            // Création du nuancier
+            var quantile = d3.scaleQuantile()
+                .domain([57, 400])      // D'après l'échelle réglé sur tableau
+                .range(d3.range(6));    // D'après le nombre d'échellons déterminé sur tableau
 
 
-        // Création de la légende à droite
-        var legend = svg.append('g')
-            .attr('transform', 'translate(525, 150)')
-            .attr('id', 'legend');
+            // Création de la légende à droite
+            var legend = svg.append('g')
+                .attr('transform', 'translate(525, 150)')
+                .attr('id', 'legend');
 
-        legend.selectAll('.colorbar')
-            .data(d3.range(6))
-            .enter().append('svg:rect')
-            .attr('y', function(d) { return d * 20 + 'px'; })
-            .attr('height', '20px')
-            .attr('width', '20px')
-            .attr('x', '0px')
-            .attr("class", function(d) { return "q" + d + "-9"; });
+            legend.selectAll('.colorbar')
+                .data(d3.range(6))
+                .enter().append('svg:rect')
+                .attr('y', function(d) { return d * 20 + 'px'; })
+                .attr('height', '20px')
+                .attr('width', '20px')
+                .attr('x', '0px')
+                .attr("class", function(d) { return "q" + d + "-9"; });
 
-        var legendScale = d3.scaleLinear()
-            .domain([57, 400])      // D'après l'échelle réglé sur tableau
-            .range([0, 6 * 20]);
+            var legendScale = d3.scaleLinear()
+                .domain([57, 400])      // D'après l'échelle réglé sur tableau
+                .range([0, 6 * 20]);
 
-        var legendAxis = svg.append("g")
-            .attr('transform', 'translate(550, 150)')
-            .call(d3.axisRight(legendScale).ticks(6));
+            var legendAxis = svg.append("g")
+                .attr('transform', 'translate(550, 150)')
+                .call(d3.axisRight(legendScale).ticks(6));
 
-        // Il est temps de jeter le pot de peinture sur la carte monsieur dame
-        data.forEach(function(row){
-            try{
-                d3.select("#" + identifying(row.departement))
-                    .attr("class", function(d) { return "department q" + quantile(+row.caParEntreprise) + "-9"; })
-                    .on("mouseover", function(d) {
-                        div.transition()
-                            .duration(200)
-                            .style("opacity", .9);
-                        div.html("<b>Département : </b>" + row.departement + "<br>"
-                            + "<b>Chiffre D'Affaire moyen : </b>" + Math.round(row.caParEntreprise) + "<br/>")
-                            .style("left", (d3.event.pageX + 30) + "px")
-                            .style("top", (d3.event.pageY - 30) + "px");
-                    })
-                    .on("mouseout", function(d) {
-                        div.transition()
-                            .duration(500)
-                            .style("opacity", 0);
-;
-                    });
-            }
-            catch(e){
-                console.log("Erreur: "+e+" <br\> Probablement on a pas réussi à retrouver l'identifiant :#"+identifying(row.departement))
-            }
+            // Il est temps de jeter le pot de peinture sur la carte monsieur dame
+            data.forEach(function(row){
+                try{
+                    d3.select("#" + identifying(row.departement))
+                        .attr("class", function(d) { return "department q" + quantile(+row.caParEntreprise) + "-9"; })
+                        .on("mouseover", function(d) {
+                            div.transition()
+                                .duration(200)
+                                .style("opacity", .9);
+                            div.html("<b>Département : </b>" + row.departement + "<br>"
+                                + "<b>Chiffre D'Affaire moyen : </b>" + Math.round(row.caParEntreprise) + "<br/>")
+                                .style("left", (d3.event.pageX + 30) + "px")
+                                .style("top", (d3.event.pageY - 30) + "px");
+                        })
+                        .on("mouseout", function(d) {
+                            div.transition()
+                                .duration(500)
+                                .style("opacity", 0);
+                            ;
+                        });
+                }
+                catch(e){
+                    console.log("Erreur: "+e+" <br\> Probablement on a pas réussi à retrouver l'identifiant :#"+identifying(row.departement))
+                }
+                });
+
+
+            resolve();
 
         });
-
-        // Dataviz 2
-// define the axis
-        var xAxis = d3.axisBottom(x);
+        });
+    });
 
 
-        var yAxis = d3.axisLeft(y)
-            .ticks(10);
+
+promise.then(function(){
+    // DATAVIZ 2
+
+    // Définition de la Dataviz 2
+        var margin = {top: 20, right: 20, bottom: 30, left: 40},
+            width2 = 960 - margin.left - margin.right,
+            height2 = 500 - margin.top - margin.bottom;
+
+    // set the ranges
+        var x = d3.scaleBand()
+            .range([0, width])
+            .padding(0.1);
+        var y = d3.scaleLinear()
+            .range([height, 0]);
+
+        var svg2 = d3.select("#dataviz2").append("svg")
+            .attr("width", width2 + margin.left + margin.right)
+            .attr("height", height2 + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
 
         dataBarChart =
             [{
@@ -188,50 +193,31 @@ d3.json('./departments.json', function(req, geojson) {
             }
             ];
 
-            console.log(dataBarChart);
-            dataBarChart.forEach(function(d) {
-                d.x = d.x;
-                d.total = +d.total;
-            });
+        console.log(dataBarChart);
+        console.log(height2);
 
-            // scale the range of the data
-            x.domain(dataBarChart.map(function(d) { return d.x; }));
-            y.domain([0, d3.max(dataBarChart, function(d) { return d.total; })]);
+    // scale the range of the data
+        var formatPercent = d3.format(".0%");
 
-            // add axis
-            svg2.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")")
-                .call(xAxis)
-                .selectAll("text")
-                .style("text-anchor", "end")
-                .attr("dx", "-.8em")
-                .attr("dy", "-.55em")
-                .attr("transform", "rotate(-90)" );
+        x.domain(dataBarChart.map(function(d) { return d.x; }));
+        y.domain([-d3.min(dataBarChart, function(d) { return d.total; }), d3.max(dataBarChart, function(d) { return d.total; })]);
 
-            svg2.append("g")
-                .attr("class", "y axis")
-                .call(yAxis)
-                .append("text")
-                .attr("transform", "rotate(-90)")
-                .attr("y", 5)
-                .attr("dy", ".71em")
-                .style("text-anchor", "end")
-                .text("Fréquence");
+    // append the rectangles for the bar chart
+        svg2.selectAll(".bar")
+            .data(dataBarChart)
+            .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", function(d) { return x(d.x); })
+            .attr("width", x.bandwidth())
+            .attr("y", function(d) { return y(d.total); })
+            .attr("height", function(d) { return  height2 - y(d.total); });
 
+    // add the x Axis
+        svg2.append("g")
+            .attr("transform", "translate(0," + height2 + ")")
+            .call(d3.axisBottom(x));
 
-            // Add bar chart
-            svg2.selectAll("bar")
-                .data(dataBarChart)
-                .enter().append("rect")
-                .attr("class", "bar")
-                .attr("x", function(d) { return x(d.x); })
-                .attr("width", x.bandwidth)
-                .attr("y", function(d) { return y(d.total); })
-                .attr("height", function(d) { return height2 - y(d.total); });
-
-
-    });
+    // add the y Axis
+        svg2.append("g")
+            .call(d3.axisLeft(y));
 });
-
-
