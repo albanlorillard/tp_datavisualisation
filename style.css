@@ -31,6 +31,12 @@ div.tooltip {
     stroke-width: 2px;
 }
 
+.department_selected {
+    stroke: red;
+    stroke-width: 2px;
+}
+
+
 #svg1 {
     display: block;
 }

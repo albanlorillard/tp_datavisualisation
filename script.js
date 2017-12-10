@@ -137,8 +137,12 @@ var promise = new Promise(function(resolve, reject) {
                             div.transition()
                                 .duration(500)
                                 .style("opacity", 0);
-                            ;
-                        });
+                        })
+                        .on("click", function(d) {
+                            d3.selectAll(".department_selected").classed("department_selected", false);
+                            d3.select(this).classed("department_selected", true);
+                            reload_dataviz2(identifying(d.properties.NOM_DEPT))
+                    });
                 }
                 catch(e){
                     console.log("Erreur: "+e+" <br\> Probablement on a pas réussi à retrouver l'identifiant :#"+identifying(row.departement))
@@ -153,30 +157,30 @@ var promise = new Promise(function(resolve, reject) {
     });
 
 
+// Définition de la Dataviz 2
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+    width2 = 960 - margin.left - margin.right,
+    height2 = 500 - margin.top - margin.bottom;
+
+// set the ranges
+var x = d3.scaleBand()
+    .range([0, width])
+    .padding(0.1);
+var y = d3.scaleLinear()
+    .range([height, 0]);
+
+var svg2 = d3.select("#dataviz2").append("svg")
+    .attr("class", "dtv2")
+    .attr("width", width2 + margin.left + margin.right)
+    .attr("height", height2 + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform",
+        "translate(" + margin.left + "," + margin.top + ")");
+
+
 
 promise.then(function(){
     // DATAVIZ 2
-
-    // Définition de la Dataviz 2
-        var margin = {top: 20, right: 20, bottom: 30, left: 40},
-            width2 = 960 - margin.left - margin.right,
-            height2 = 500 - margin.top - margin.bottom;
-
-    // set the ranges
-        var x = d3.scaleBand()
-            .range([0, width])
-            .padding(0.1);
-        var y = d3.scaleLinear()
-            .range([height, 0]);
-
-        var svg2 = d3.select("#dataviz2").append("svg")
-            .attr("width", width2 + margin.left + margin.right)
-            .attr("height", height2 + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform",
-                "translate(" + margin.left + "," + margin.top + ")");
-
-
         dataBarChart =
             [{
                 "x" : "Alimentation",
@@ -210,14 +214,102 @@ promise.then(function(){
             .attr("x", function(d) { return x(d.x); })
             .attr("width", x.bandwidth())
             .attr("y", function(d) { return y(d.total); })
-            .attr("height", function(d) { return  height2 - y(d.total); });
+            .attr("height", function(d) { return  height2 - y(d.total); })
+            .on("mouseover", function(d) {
+                div.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+                div.html("<b>Pourcentage secteur "+ d.x+" : </b>" + Math.round(d.total*100) + "%<br/>")
+                    .style("left", (d3.event.pageX + 30) + "px")
+                    .style("top", (d3.event.pageY - 30) + "px");
+            })
+            .on("mouseout", function(d) {
+                div.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
 
     // add the x Axis
         svg2.append("g")
+            .attr("class", "xAxis")
             .attr("transform", "translate(0," + height2 + ")")
             .call(d3.axisBottom(x));
 
     // add the y Axis
         svg2.append("g")
+            .attr("class", "y axis")
             .call(d3.axisLeft(y));
 });
+
+
+// FUNCTION RELOAD Dataviz 2
+function reload_dataviz2(id_dpt){
+    d3.csv("./donnees_artisans.csv", function(csv){
+        csv.forEach(function(row) {
+            if (id_dpt == identifying(row.Departement)){
+                dataBarChart =
+                    [{
+                        "x" : "Alimentation",
+                        "total": parseInt(row.ALIMENTATION)/parseInt(row.Total)
+                    },{
+                        "x" : "Fabrication",
+                        "total": parseInt(row.FABRICATION)/parseInt(row.Total)
+                    },{
+                        "x" : "Batiment",
+                        "total": parseInt(row.BATIMENT)/parseInt(row.Total)
+                    },{
+                        "x" : "Service",
+                        "total": parseInt(row.SERVICES)/parseInt(row.Total)
+                    }
+                    ];
+            }
+        });
+
+        // scale the range of the data
+        var formatPercent = d3.format(".0%");
+
+        /*            x.domain(dataBarChart.map(function(d) { return d.x; }));
+         y.domain([-d3.min(dataBarChart, function(d) { return d.total; }), d3.max(dataBarChart, function(d) { return d.total; })]);
+         */
+        var svg2 = d3.select(".dtv2");
+
+        var bars = svg2.selectAll(".bar")
+            .remove()
+            .exit()
+            .data(dataBarChart);
+        //now actually give each rectangle the corresponding data
+
+
+        // append the rectangles for the bar chart
+        bars.enter()
+            .append("rect")
+            .attr("class", "bar")
+            .attr("x", function(d) { return x(d.x); })
+            .attr("width", x.bandwidth())
+            .attr("y", function(d) { return y(d.total); })
+            .attr("height", function(d) { return  height2 - y(d.total); })
+            .on("mouseover", function(d) {
+                div.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+                div.html("<b>Pourcentage secteur "+ d.x+" : </b>" + Math.round(d.total*100) + "%<br/>")
+                    .style("left", (d3.event.pageX + 30) + "px")
+                    .style("top", (d3.event.pageY - 30) + "px");
+            })
+            .on("mouseout", function(d) {
+                div.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
+
+        //left axis
+        svg2.select('.y')
+            .call(d3.axisLeft(y))
+        //bottom axis
+        svg2.select('.xAxis')
+            .attr("transform", "translate(0," + height2 + ")")
+            .call(d3.axisBottom(x))
+    });
+
+
+}
