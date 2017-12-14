@@ -200,47 +200,52 @@ promise.then(function(){
         console.log(dataBarChart);
         console.log(height2);
 
-    // scale the range of the data
-        var formatPercent = d3.format(".0%");
-
-        x.domain(dataBarChart.map(function(d) { return d.x; }));
-        y.domain([-d3.min(dataBarChart, function(d) { return d.total; }), d3.max(dataBarChart, function(d) { return d.total; })]);
-
-    // append the rectangles for the bar chart
-        svg2.selectAll(".bar")
-            .data(dataBarChart)
-            .enter().append("rect")
-            .attr("class", "bar")
-            .attr("x", function(d) { return x(d.x); })
-            .attr("width", x.bandwidth())
-            .attr("y", function(d) { return y(d.total); })
-            .attr("height", function(d) { return  height2 - y(d.total); })
-            .on("mouseover", function(d) {
-                div.transition()
-                    .duration(200)
-                    .style("opacity", .9);
-                div.html("<b>Pourcentage secteur "+ d.x+" : </b>" + Math.round(d.total*100) + "%<br/>")
-                    .style("left", (d3.event.pageX + 30) + "px")
-                    .style("top", (d3.event.pageY - 30) + "px");
-            })
-            .on("mouseout", function(d) {
-                div.transition()
-                    .duration(500)
-                    .style("opacity", 0);
-            });
-
-    // add the x Axis
-        svg2.append("g")
-            .attr("class", "xAxis")
-            .attr("transform", "translate(0," + height2 + ")")
-            .call(d3.axisBottom(x));
-
-    // add the y Axis
-        svg2.append("g")
-            .attr("class", "y axis")
-            .call(d3.axisLeft(y));
+    build_datav2(dataBarChart)
 });
 
+
+function build_datav2(dataBarChart){
+    // scale the range of the data
+    var formatPercent = d3.format(".0%");
+
+    x.domain(dataBarChart.map(function(d) { return d.x; }));
+    y.domain([-0.5, 1]);
+
+    // append the rectangles for the bar chart
+    svg2.selectAll(".bar")
+        .data(dataBarChart)
+        .enter().append("rect")
+        .attr("class", "bar")
+        .attr("x", function(d) { return x(d.x); })
+        .attr("width", x.bandwidth())
+        .attr("y", function(d) { return y(d.total); })
+        .attr("height", function(d) { return  height2 - y(d.total); })
+        .on("mouseover", function(d) {
+            div.transition()
+                .duration(200)
+                .style("opacity", .9);
+            div.html("<b>Pourcentage secteur "+ d.x+" : </b>" + Math.round(d.total*100) + "%<br/>")
+                .style("left", 750 + "px")
+                .style("top",  50 + "px");
+        })
+        .on("mouseout", function(d) {
+            div.transition()
+                .duration(500)
+                .style("opacity", 0);
+        });
+
+    // add the x Axis
+    svg2.append("g")
+        .attr("class", "xAxis")
+        .attr("transform", "translate(0," + height2 + ")")
+        .call(d3.axisBottom(x));
+
+    // add the y Axis
+    svg2.append("g")
+        .attr("class", "y axis")
+        .call(d3.axisLeft(y));
+
+}
 
 // FUNCTION RELOAD Dataviz 2
 function reload_dataviz2(id_dpt){
@@ -273,6 +278,9 @@ function reload_dataviz2(id_dpt){
          */
         var svg2 = d3.select(".dtv2");
 
+        x.domain(dataBarChart.map(function(d) { return d.x; }));
+        y.domain([-0.5, 1]);
+
         var bars = svg2.selectAll(".bar")
             .remove()
             .exit()
@@ -284,17 +292,17 @@ function reload_dataviz2(id_dpt){
         bars.enter()
             .append("rect")
             .attr("class", "bar")
-            .attr("x", function(d) { return x(d.x); })
+            .attr("x", function(d) { return 40+ x(d.x); })
             .attr("width", x.bandwidth())
-            .attr("y", function(d) { return y(d.total); })
+            .attr("y", function(d) { return 20+y(d.total); })
             .attr("height", function(d) { return  height2 - y(d.total); })
             .on("mouseover", function(d) {
                 div.transition()
                     .duration(200)
                     .style("opacity", .9);
                 div.html("<b>Pourcentage secteur "+ d.x+" : </b>" + Math.round(d.total*100) + "%<br/>")
-                    .style("left", (d3.event.pageX + 30) + "px")
-                    .style("top", (d3.event.pageY - 30) + "px");
+                    .style("left", 750 + "px")
+                    .style("top",  50 + "px");
             })
             .on("mouseout", function(d) {
                 div.transition()

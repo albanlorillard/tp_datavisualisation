@@ -1,17 +1,5 @@
 /* Dataviz1*/
-div.tooltip {
-    position: absolute;
-    text-align: center;
-    color: black;
-    width: 275px;
-    height: 37px;
-    padding: 2px;
-    font: 12px sans-serif;
-    background: grey;
-    border: 0px;
-    border-radius: 8px;
-    pointer-events: none;
-}
+
 
 #info {
     margin-top: 50px;
@@ -67,4 +55,34 @@ h2 {
 p {
     text-align: justify;
     color: #2D3F53;
+}
+
+#dataviz1 {
+    width:600px;
+    left:0;
+    position:absolute;
+    z-index:1;
+}
+
+
+#dataviz2 {
+    width:650px;
+    right:0;
+    position:absolute;
+    z-index:2;
+}
+
+div.tooltip {
+    position: absolute;
+    text-align: center;
+    color: black;
+    width: 275px;
+    height: 37px;
+    padding: 2px;
+    font: 12px sans-serif;
+    background: grey;
+    border: 0px;
+    border-radius: 8px;
+    pointer-events: none;
+    z-index:49;
 }
