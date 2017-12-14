@@ -15,6 +15,117 @@
 	<div id="dataviz1"></div>
 	<div id="dataviz2"></div>
   </section>
+
+  <section>
+    <h1>Récupération du jeu de données</h1>
+    
+    <p>Nous avons eu quelques difficultés à trouver un bon jeu de données. En effet, la plupart de ceux-ci étaient inutilisables sans modification ou sous un format peu connue. Nous avons récupéré un jeu de données nommé artisans_estalab sur le site data.gouv. Nous avons dû modifier le fichier avec excel afin de mieux organiser les données et pouvoir les travailler.</p>
+    
+    <h1>Description des données</h1>
+    
+    <p>Ce jeu de données nous présente le nombre d’entreprises artisanales par département et divisé selon quatre catégories : Alimentation, fabrication, bâtiment et services.
+    La première question que nous nous sommes posé est “à quoi correspond le nombre total d’entreprise et le nombre total d’entreprise d’artisanat ?” Nous avons compris que certaines entreprises ne correspondaient pas aux catégories suivantes : Alimentation, fabrication, bâtiment et services.
+    Ensuite, nous nous sommes demandé la façon de nous pouvions exploiter les données sachant que nous avions seulement le nombre total d’entreprise par secteur et par département. Afin d’exploiter les données plus facilement, nous avons calculé des pourcentages pour chaque catégorie.
+    Avec le logiciel tableau, nous avons créé de nouveau champ. Ceux-ci nous donnent donc les pourcentages d’entreprise par secteur et par département. 
+    Par exemple, le nombre de pourcentage d’entreprise en alimentation dans la région de la Guadeloupe.
+    <br>
+    <img src="./image/part1.png">
+    <br>
+    </p>
+    
+    <h1>Exploitation avec Tableau</h1>
+    <h2>Première étape</h2>
+    <p>Tout d’abord, nous avons voulu exploiter les données avec une visualisation sous forme de carte. En effet, nous avions des données décrivant des départements. Malheureusement, nous ne trouvions pas de visualisation satisfaisante. En effet, nous n’avions pas encore créé les nouveaux champs pourcentage.</p>
+    <h2>Deuxième étape</h2>
+    <p>Ensuite, afin de mieux comprendre les différents champs, nous avons utilisé des nuages de points. Nous nous sommes rendu compte que les données n’étaient pas clairement utilisables telles qu’elles étaient de base. En effet, chaque nuage de points  nous donnés des informations avec des corrélations non logiques.</p>
+    <h2>Troisième étape</h2>
+    <p>
+      C’est à partir de ce moment que nous nous sommes rendu compte de notre erreur. Les données représentées étaient des totaux et non des pourcentages. Nous avons donc créé de nouveau champ “pourcentage” pour chaque secteur d’activité et par département.
+    </p>
+    <h2>Quatrième étape</h2>
+    <p>
+      Finalement, nous sommes revenue sur la visualisation sous forme de carte géographique. Nous avons comparé les différentes zones géographiques en fonction de leur domaine d’activité principal. Pour faciliter chaque visualisation nous avons adapté l’échelle des couleurs.
+      Nous allons dans la section suivante vous expliquer nos résultats.
+    </p>
+    <h2>Cinquième étape</h2>
+    <p>
+      Afin d’étudier la composition des entreprises de chaque département nous avons couplé la visualisation sous forme de carte géographique avec un histogramme
+    </p>
+
+    <h1>Exploitation des résultats</h1>
+    <h2>Le domaine du service</h2>
+    <p>
+      Tout d’abord, voici le pourcentage d’entreprise dans le domaine du service par département. 
+      Nous pouvons très clairement voir le Nord d’une couleur très foncé avec notamment le Pas-de-Calais.
+      Une cause de ce pourcentage plus élevé pourrait être la proximité de l’Angleterre et la présence du tunnel de la Manche.
+      <br>
+      <img src="./image/part2.png">
+      <br>
+
+    </p>
+
+    <h2>Le domaine de l’alimentation</h2>
+    <p>
+      Puis, nous avons décidé de visualiser le pourcentage d’entreprise dans le domaine de l’alimentation. Après avoir échelonné les couleurs de la carte, des points importants apparaissent.
+      <br>
+      <img src="./image/part3.png">
+      <br>
+      Ici, nous pouvons remarquer que la côte Nord-ouest présente des pourcentages très élevés.
+      Étonnamment, notre capitale apparaît de couleur claire pour ce domaine d’activité. Ceci est dû au pourcentage d’entreprise dans le secteur du service   présent dans cette zone.
+      <br>
+      <img src="./image/part4.png">
+      <br>
+    </p>
+
+    <h2>Le domaine du bâtiment</h2>
+    <p>
+      Pour finir, nous nous sommes intéressé au domaine du bâtiment.
+Sur cette visualisation deux choses intéressantes sont visibles.
+    Tout d’abord, deux groupes sont majoritairement présents : ceux avec un pourcentage très haut et ceux à l’inverse avec un pourcentage très faible.
+    Les départements présentant le plus grand pourcentage d’entreprise dans le domaine du bâtiment sont regroupé dans le sud de la France. Les départements constituant ce groupe sont l’Ariège, l'Hérault, le Gard, le Var, les Alpes-Maritimes, la Savoie, les Hautes Alpes et la Corse du Nord et du Sud. 
+    Ce fort pourcentage peut être expliqué par le climat. En effet, cette zone est favorable pour le tourisme. De nombreux hôtels, bâtiments touristiques et aménagement du territoire sont présents.
+     À l'inverse, un pourcentage très faible est présent dans le nord. Le climat est peut-être une cause.
+      <br>
+      <img src="./image/part5.png">
+      <br>
+    </p>
+
+
+    <h2>Le chiffre d’affaire</h2>
+    <p>
+      Ensuite, nous avons décidé de visualiser dans quel département le chiffre d’affaires par entreprise dans le secteur artisanal était le plus élevé. Nous avons trouvé deux résultats intéressants.
+      Premièrement, les départements présentant les entreprises au plus fort chiffre d’affaires sont regroupés dans le Nord-est près de la frontière allemande.
+      De plus, nous voyons une nette différence entre les départements du Nord-est et ceux du centre et de la côte méditerranéenne. Avec cette visualisation, nous pouvons clairement apercevoir la diagonale du vide composé des départements allant de la Yonne jusqu’à la Dordogne.
+      <br>
+      <img src="./image/part6.png">
+      <br>
+      Ici, nous avons un chiffre d’affaires de 324.3 M pour la Moselle, de 271.2 pour le Bas-Rhin et de 395.7 M pour le Territoire de Belfort. À l'inverse, nous avons 90.6M de chiffre d’affaires pour le Gers ou de 83.2M pour le Var.      
+    </p>
+
+    <h2>Analyse de la composition des départements par domaine d’activité</h2>
+    <p>
+      Nous avons pour l’instant étudié les différents domaines d’activité individuellement. Il peut être intéressant de comprendre la répartition des départements par secteur artisanal.
+      <br>
+      <img src="./image/part7.png">
+      <br>
+      Pour ce faire, nous avons couplé la visualisation sous forme de carte géographique avec un histogramme. Lorsqu’un département est sélectionné, l’histogramme se met à jour.
+      En analysant l’histogramme pour différents départements nous nous rendons compte que majoritairement le pourcentage de service et bâtiment est plus élevé. Le pourcentage d’alimentation est généralement plus faible que les trois autres.
+    </p>
+    <p>
+      Nous nous sommes intéressé aux départements présentant le plus faible pourcentage d’entreprise dans le bâtiment c’est-à-dire : le Maine-et-Loire, la Sarthe, la Mayenne, l’Indre et l’Indre-et-Loire.
+      Étonnamment, pour ces cinq départements même si le pourcentage d’entreprise dans le secteur du bâtiment est très faible il reste au-dessus des trois autres.
+      Voici, un exemple avec la Sarthe :
+    <br>
+    <img src="./image/part8.png">
+     <br>
+          Cette répartition est quasiment identique aux cinq autres départements concernés. 
+    Nous pouvons remarquer que pour la liste de départements sélectionnés plus haut (le Maine-et-Loire, la Sarthe, la Mayenne, l’Indre et l’Indre-et-Loire) à chaque fois le pourcentage d’entreprise dans le bâtiment est plus faible dû à un fort pourcentage d’entreprise dans le domaine du service.
+
+    </p>
+
+
+
+  </section>
   
   
   <!-- D3JS -->
