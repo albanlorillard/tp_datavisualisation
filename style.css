@@ -42,6 +42,21 @@
     display: none;
 }
 
+h1 {
+    text-align: center;
+    color: #4682B4;
+}
+
+h2 {
+    text-align: center;
+    color: #6BAED6;
+}
+
+p {
+    text-align: justify;
+    color: #2D3F53;
+}
+
 #dataviz1 {
     width:600px;
     left:0;
@@ -70,4 +85,8 @@ div.tooltip {
     border-radius: 8px;
     pointer-events: none;
     z-index:49;
+}
+
+#blocBla {
+    padding-top: 40%;
 }
