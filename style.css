@@ -86,3 +86,7 @@ div.tooltip {
     pointer-events: none;
     z-index:49;
 }
+
+#blocBla {
+    padding-top: 40%;
+}
