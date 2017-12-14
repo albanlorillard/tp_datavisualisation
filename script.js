@@ -19,6 +19,7 @@ String.prototype.sansAccent = function(){
     return str;
 };
 
+var datachartbase;
 function identifying(str){
     return str.replace(/'|"|-/gi, "").sansAccent().toLowerCase()
 }
@@ -132,17 +133,15 @@ var promise = new Promise(function(resolve, reject) {
                                 + "<b>Chiffre D'Affaire moyen : </b>" + Math.round(row.caParEntreprise) + "<br/>")
                                 .style("left", (d3.event.pageX + 30) + "px")
                                 .style("top", (d3.event.pageY - 30) + "px");
+
+                            reload_dataviz2(identifying(d.properties.NOM_DEPT))
                         })
                         .on("mouseout", function(d) {
+                            reload_dataviz2("");
                             div.transition()
                                 .duration(500)
                                 .style("opacity", 0);
-                        })
-                        .on("click", function(d) {
-                            d3.selectAll(".department_selected").classed("department_selected", false);
-                            d3.select(this).classed("department_selected", true);
-                            reload_dataviz2(identifying(d.properties.NOM_DEPT))
-                    });
+                        });
                 }
                 catch(e){
                     console.log("Erreur: "+e+" <br\> Probablement on a pas réussi à retrouver l'identifiant :#"+identifying(row.departement))
@@ -201,6 +200,7 @@ promise.then(function(){
         console.log(height2);
 
     build_datav2(dataBarChart)
+    datachartbase = dataBarChart
 });
 
 
@@ -249,27 +249,8 @@ function build_datav2(dataBarChart){
 
 // FUNCTION RELOAD Dataviz 2
 function reload_dataviz2(id_dpt){
-    d3.csv("./donnees_artisans.csv", function(csv){
-        csv.forEach(function(row) {
-            if (id_dpt == identifying(row.Departement)){
-                dataBarChart =
-                    [{
-                        "x" : "Alimentation",
-                        "total": parseInt(row.ALIMENTATION)/parseInt(row.Total)
-                    },{
-                        "x" : "Fabrication",
-                        "total": parseInt(row.FABRICATION)/parseInt(row.Total)
-                    },{
-                        "x" : "Batiment",
-                        "total": parseInt(row.BATIMENT)/parseInt(row.Total)
-                    },{
-                        "x" : "Service",
-                        "total": parseInt(row.SERVICES)/parseInt(row.Total)
-                    }
-                    ];
-            }
-        });
-
+    if (id_dpt == "")
+    {
         // scale the range of the data
         var formatPercent = d3.format(".0%");
 
@@ -278,13 +259,15 @@ function reload_dataviz2(id_dpt){
          */
         var svg2 = d3.select(".dtv2");
 
-        x.domain(dataBarChart.map(function(d) { return d.x; }));
+        x.domain(datachartbase.map(function (d) {
+            return d.x;
+        }));
         y.domain([-0.5, 1]);
 
         var bars = svg2.selectAll(".bar")
             .remove()
             .exit()
-            .data(dataBarChart);
+            .data(datachartbase);
         //now actually give each rectangle the corresponding data
 
 
@@ -292,19 +275,25 @@ function reload_dataviz2(id_dpt){
         bars.enter()
             .append("rect")
             .attr("class", "bar")
-            .attr("x", function(d) { return 40+ x(d.x); })
+            .attr("x", function (d) {
+                return 40 + x(d.x);
+            })
             .attr("width", x.bandwidth())
-            .attr("y", function(d) { return 20+y(d.total); })
-            .attr("height", function(d) { return  height2 - y(d.total); })
-            .on("mouseover", function(d) {
+            .attr("y", function (d) {
+                return 20 + y(d.total);
+            })
+            .attr("height", function (d) {
+                return height2 - y(d.total);
+            })
+            .on("mouseover", function (d) {
                 div.transition()
                     .duration(200)
                     .style("opacity", .9);
-                div.html("<b>Pourcentage secteur "+ d.x+" : </b>" + Math.round(d.total*100) + "%<br/>")
+                div.html("<b>Pourcentage secteur " + d.x + " : </b>" + Math.round(d.total * 100) + "%<br/>")
                     .style("left", 750 + "px")
-                    .style("top",  50 + "px");
+                    .style("top", 50 + "px");
             })
-            .on("mouseout", function(d) {
+            .on("mouseout", function (d) {
                 div.transition()
                     .duration(500)
                     .style("opacity", 0);
@@ -317,7 +306,84 @@ function reload_dataviz2(id_dpt){
         svg2.select('.xAxis')
             .attr("transform", "translate(0," + height2 + ")")
             .call(d3.axisBottom(x))
-    });
+    }
+    else {
+        d3.csv("./donnees_artisans.csv", function (csv) {
+            csv.forEach(function (row) {
+                if (id_dpt == identifying(row.Departement)) {
+                    dataBar =
+                        [{
+                            "x": "Alimentation",
+                            "total": parseInt(row.ALIMENTATION) / parseInt(row.Total)
+                        }, {
+                            "x": "Fabrication",
+                            "total": parseInt(row.FABRICATION) / parseInt(row.Total)
+                        }, {
+                            "x": "Batiment",
+                            "total": parseInt(row.BATIMENT) / parseInt(row.Total)
+                        }, {
+                            "x": "Service",
+                            "total": parseInt(row.SERVICES) / parseInt(row.Total)
+                        }
+                        ];
+                }
+            });
+
+            // scale the range of the data
+            var formatPercent = d3.format(".0%");
+
+            /*            x.domain(dataBarChart.map(function(d) { return d.x; }));
+             y.domain([-d3.min(dataBarChart, function(d) { return d.total; }), d3.max(dataBarChart, function(d) { return d.total; })]);
+             */
+            var svg2 = d3.select(".dtv2");
+
+            x.domain(dataBar.map(function (d) {
+                return d.x;
+            }));
+            y.domain([-0.5, 1]);
+
+            var bars = svg2.selectAll(".bar")
+                .remove()
+                .exit()
+                .data(dataBar);
+            //now actually give each rectangle the corresponding data
 
 
+            // append the rectangles for the bar chart
+            bars.enter()
+                .append("rect")
+                .attr("class", "bar")
+                .attr("x", function (d) {
+                    return 40 + x(d.x);
+                })
+                .attr("width", x.bandwidth())
+                .attr("y", function (d) {
+                    return 20 + y(d.total);
+                })
+                .attr("height", function (d) {
+                    return height2 - y(d.total);
+                })
+                .on("mouseover", function (d) {
+                    div.transition()
+                        .duration(200)
+                        .style("opacity", .9);
+                    div.html("<b>Pourcentage secteur " + d.x + " : </b>" + Math.round(d.total * 100) + "%<br/>")
+                        .style("left", 750 + "px")
+                        .style("top", 50 + "px");
+                })
+                .on("mouseout", function (d) {
+                    div.transition()
+                        .duration(500)
+                        .style("opacity", 0);
+                });
+
+            //left axis
+            svg2.select('.y')
+                .call(d3.axisLeft(y))
+            //bottom axis
+            svg2.select('.xAxis')
+                .attr("transform", "translate(0," + height2 + ")")
+                .call(d3.axisBottom(x))
+        });
+    }
 }
