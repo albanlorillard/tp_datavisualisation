@@ -72,8 +72,8 @@ var promise = new Promise(function(resolve, reject) {
                     batiment: parseInt(row.BATIMENT)/parseInt(row.Total),
                     fabrication: parseInt(row.FABRICATION)/parseInt(row.Total),
                     services: parseInt(row.SERVICES)/parseInt(row.Total),
-                    caParEntreprise: parseInt(row.CA)/(parseInt(row.Total)+parseInt(row.Entreprise_Artisanale)),
-                    vaParEntreprise: parseInt(row.VA)/(parseInt(row.Total)+parseInt(row.Entreprise_Artisanale)),
+                    caParEntreprise: parseInt(row.CA)/(parseInt(row.Entreprise_Artisanale)),
+                    vaParEntreprise: parseInt(row.VA)/(parseInt(row.Entreprise_Artisanale)),
                     ca: parseInt(row.CA),
                     va: parseInt(row.VA)
                 });
@@ -130,7 +130,8 @@ var promise = new Promise(function(resolve, reject) {
                                 .duration(200)
                                 .style("opacity", .9);
                             div.html("<b>Département : </b>" + row.departement + "<br>"
-                                + "<b>Chiffre D'Affaire moyen : </b>" + Math.round(row.caParEntreprise) + "<br/>")
+                                + "<b>Chiffre D'Affaire moyen : </b>" + Math.round(row.caParEntreprise) + "<br/>"
+                            + "<b>Valeur ajouté moyenne : </b>" + Math.round(row.vaParEntreprise) + "<br/>")
                                 .style("left", (d3.event.pageX + 30) + "px")
                                 .style("top", (d3.event.pageY - 30) + "px");
 
